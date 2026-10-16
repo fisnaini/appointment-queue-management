@@ -1,0 +1,16 @@
+@Qwiik_Host = http://localhost:5021
+
+### 1. Create appointment
+POST {{Qwiik_Host}}/api/appointments
+Content-Type: application/json
+
+{
+  "customerName": "Budi",
+  "appointmentDate": "2026-10-16"
+}
+
+###
+
+### 2. Get appointments by date
+GET {{Qwiik_Host}}/api/appointments?date=2026-10-16
+Accept: application/json

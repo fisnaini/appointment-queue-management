@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qwiik Appointment Queue | by Fitri</title>
+
+    <style>
+      :root {
+        --purple: #6338e8;
+        --purple-dark: #352078;
+        --purple-deep: #24145f;
+        --lavender: #f0eaff;
+        --text: #171541;
+        --muted: #77769f;
+        --border: #ece9fb;
+        --white: #fff;
+        --shadow: 0 8px 26px rgba(55, 35, 115, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        background: #f8f8ff;
+        color: var(--text);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: flex;
+      }
+
+      .sidebar {
+        width: 258px;
+        flex-shrink: 0;
+        padding: 28px 18px;
+        color: white;
+        background: linear-gradient(165deg, #38217f, #2c1a70 60%, #211255);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .brand {
+        padding: 0 10px 8px;
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-icon {
+        width: 45px;
+        height: 45px;
+        border: 2px solid white;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        font-size: 25px;
+      }
+
+      .brand-name {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.8px;
+      }
+
+      .brand-sub {
+        margin: 4px 0 0 57px;
+        color: #e2d9ff;
+        font-size: 14px;
+      }
+
+      .by-fitri {
+        margin: 12px 0 0 84px;
+        font-family: "Segoe Script", cursive;
+        font-size: 20px;
+        font-style: italic;
+        color: #e7dcff;
+      }
+
+      .nav {
+        display: grid;
+        gap: 9px;
+      }
+
+      .nav-item {
+        padding: 14px 15px;
+        border-radius: 11px;
+        color: #ddd4ff;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        font-size: 15px;
+      }
+
+      .nav-item.active {
+        color: white;
+        background: linear-gradient(100deg, #7952f5, #6338e8);
+        box-shadow: 0 7px 18px #1c105855;
+      }
+
+      .nav-icon {
+        width: 24px;
+        text-align: center;
+        font-size: 20px;
+      }
+
+      .side-limit {
+        margin-top: auto;
+        padding: 17px;
+        border-radius: 15px;
+        background: #ffffff12;
+        border: 1px solid #ffffff1c;
+      }
+
+      .side-limit strong {
+        display: block;
+        margin-bottom: 7px;
+      }
+
+      .side-limit span {
+        color: #d8ceff;
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      main {
+        min-width: 0;
+        flex: 1;
+        padding: 30px clamp(18px, 3vw, 44px) 20px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        padding: 7px 12px;
+        background: #e9deff;
+        color: #6033dd;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      h1 {
+        margin: 13px 0 8px;
+        font-size: clamp(28px, 3vw, 40px);
+        letter-spacing: -1.3px;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        white-space: nowrap;
+        color: #6c6998;
+        font-size: 14px;
+      }
+
+      .avatar {
+        width: 45px;
+        height: 45px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--purple);
+        color: white;
+        font-weight: 700;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .stat {
+        padding: 20px;
+        min-height: 124px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: white;
+        box-shadow: var(--shadow);
+        display: flex;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .stat-icon {
+        width: 52px;
+        height: 52px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #eee6ff;
+        color: var(--purple);
+        font-size: 23px;
+      }
+
+      .stat:nth-child(2) .stat-icon {
+        background: #e1f2ff;
+        color: #1686d9;
+      }
+
+      .stat:nth-child(3) .stat-icon {
+        background: #e0f8e8;
+        color: #219653;
+      }
+
+      .stat:nth-child(4) .stat-icon {
+        background: #fff0e4;
+        color: #e47b20;
+      }
+
+      .stat-label {
+        font-size: 13px;
+        color: #6c6998;
+        margin-bottom: 8px;
+      }
+
+      .stat-number {
+        font-size: 29px;
+        font-weight: 800;
+        letter-spacing: -0.7px;
+      }
+
+      .stat-note {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+
+      .panel {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        box-shadow: var(--shadow);
+        padding: 20px;
+        margin-bottom: 18px;
+      }
+
+      .controls {
+        display: flex;
+        align-items: end;
+        gap: 13px;
+        flex-wrap: wrap;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      label {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      input {
+        min-height: 45px;
+        border: 1px solid #d9d4ef;
+        border-radius: 9px;
+        padding: 0 13px;
+        color: var(--text);
+        background: white;
+      }
+
+      input:focus {
+        outline: 2px solid #d8caff;
+        border-color: var(--purple);
+      }
+
+      .btn {
+        min-height: 45px;
+        border: 0;
+        border-radius: 9px;
+        padding: 0 20px;
+        font-weight: 700;
+      }
+
+      .btn-primary {
+        color: white;
+        background: linear-gradient(100deg, #7549f4, #5c32df);
+      }
+
+      .btn-outline {
+        color: var(--purple);
+        background: white;
+        border: 1px solid var(--purple);
+      }
+
+      .btn:hover {
+        filter: brightness(0.97);
+      }
+
+      .btn:disabled {
+        opacity: 0.65;
+        cursor: wait;
+      }
+
+      .add-button {
+        margin-left: auto;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .section-title span {
+        display: grid;
+        place-items: center;
+        width: 39px;
+        height: 39px;
+        border-radius: 12px;
+        color: var(--purple);
+        background: var(--lavender);
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+      }
+
+      thead {
+        background: #f0ebff;
+      }
+
+      th {
+        padding: 14px 15px;
+        text-align: left;
+        font-size: 13px;
+      }
+
+      th:first-child {
+        border-radius: 8px 0 0 8px;
+      }
+
+      th:last-child {
+        border-radius: 0 8px 8px 0;
+      }
+
+      td {
+        padding: 15px;
+        border-bottom: 1px solid #efedf8;
+        font-size: 14px;
+      }
+
+      .token {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 8px;
+        background: #f0eaff;
+        color: #6033dd;
+        font-weight: 800;
+      }
+
+      .empty {
+        margin-top: 16px;
+        padding: 22px;
+        text-align: center;
+        border: 1px dashed #d8ccff;
+        border-radius: 12px;
+        color: var(--muted);
+        display: none;
+      }
+
+      .empty .empty-icon {
+        font-size: 30px;
+        margin-bottom: 8px;
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 4px 5px;
+        color: #8986b5;
+        font-size: 12px;
+      }
+
+      .footer .signature {
+        color: #7549f4;
+        font-family: "Segoe Script", cursive;
+        font-style: italic;
+        font-size: 16px;
+        margin-left: 7px;
+      }
+
+      .message {
+        display: none;
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 9px;
+        font-size: 14px;
+      }
+
+      .message.error {
+        display: block;
+        background: #fff0f0;
+        color: #a82c39;
+      }
+
+      .message.success {
+        display: block;
+        background: #ecfff2;
+        color: #17733a;
+      }
+
+      .modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        padding: 20px;
+        background: #17102f88;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-backdrop.show {
+        display: flex;
+      }
+
+      .modal {
+        width: min(100%, 460px);
+        background: white;
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 20px 70px #17102f44;
+      }
+
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .modal-head h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .close {
+        border: 0;
+        background: #f2effb;
+        border-radius: 8px;
+        width: 34px;
+        height: 34px;
+        font-size: 20px;
+      }
+
+      .form-fields {
+        display: grid;
+        gap: 15px;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: end;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      @media (max-width: 1050px) {
+        .sidebar {
+          width: 220px;
+        }
+
+        .stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .stat {
+          padding: 16px;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .app {
+          display: block;
+        }
+
+        .sidebar {
+          width: 100%;
+          padding: 18px;
+          gap: 16px;
+        }
+
+        .brand {
+          padding: 0;
+        }
+
+        .brand-name {
+          font-size: 24px;
+        }
+
+        .brand-sub {
+          margin-left: 57px;
+        }
+
+        .by-fitri {
+          margin-left: 70px;
+          margin-top: 4px;
+        }
+
+        .nav {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .nav-item {
+          padding: 11px;
+          font-size: 13px;
+        }
+
+        .side-limit {
+          display: none;
+        }
+
+        main {
+          padding: 22px 14px;
+        }
+
+        .topbar {
+          align-items: flex-start;
+        }
+
+        .profile {
+          font-size: 12px;
+          gap: 8px;
+        }
+
+        .avatar {
+          width: 37px;
+          height: 37px;
+        }
+
+        .stats {
+          gap: 9px;
+        }
+
+        .stat {
+          min-height: 108px;
+          gap: 9px;
+          padding: 12px;
+        }
+
+        .stat-icon {
+          width: 38px;
+          height: 38px;
+          font-size: 18px;
+        }
+
+        .stat-number {
+          font-size: 24px;
+        }
+
+        .stat-label {
+          font-size: 12px;
+        }
+
+        .panel {
+          padding: 15px;
+        }
+
+        .add-button {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .controls .field {
+          flex: 1;
+          min-width: 150px;
+        }
+
+        .controls .btn-primary {
+          flex: 1;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-row">
+            <div class="brand-icon">▦</div>
+            <div class="brand-name">Qwiik</div>
+          </div>
+          <div class="brand-sub">Appointment Queue</div>
+          <div class="by-fitri">by Fitri ♡</div>
+        </div>
+
+        <nav class="nav" aria-label="Main navigation">
+          <a class="nav-item active" href="#queue">
+            <span class="nav-icon">⌂</span> Queue
+          </a>
+          <a class="nav-item" href="#" id="openAddNav">
+            <span class="nav-icon">⊕</span> New Appointment
+          </a>
+          <a class="nav-item" href="/swagger" target="_blank" rel="noreferrer">
+            <span class="nav-icon">▤</span> API Documentation
+          </a>
+          <a class="nav-item" href="#about">
+            <span class="nav-icon">ⓘ</span> About
+          </a>
+        </nav>
+
+        <div class="side-limit">
+          <strong>▦ &nbsp; Daily Limit</strong>
+          <span>5 appointments<br />per day</span>
+        </div>
+      </aside>
+
+      <main id="queue">
+        <header class="topbar">
+          <div>
+            <span class="eyebrow">Welcome to Qwiik</span>
+            <h1>Appointment Queue</h1>
+            <p class="subtitle">
+              View and manage scheduled appointments. Daily limit is 5
+              appointments.
+            </p>
+          </div>
+          <div class="profile">
+            <div>
+              <div>Today</div>
+              <strong id="todayLabel">—</strong>
+            </div>
+            <div class="avatar">FI</div>
+          </div>
+        </header>
+
+        <section class="stats" aria-label="Appointment statistics">
+          <article class="stat">
+            <div class="stat-icon">♟</div>
+            <div>
+              <div class="stat-label">Total Appointments</div>
+              <div class="stat-number" id="totalCount">0</div>
+              <div class="stat-note">for selected date</div>
+            </div>
+          </article>
+
+          <article class="stat">
+            <div class="stat-icon">▦</div>
+            <div>
+              <div class="stat-label">Daily Limit</div>
+              <div class="stat-number">5</div>
+              <div class="stat-note">appointments per day</div>
+            </div>
+          </article>
+
+          <article class="stat">
+            <div class="stat-icon">✓</div>
+            <div>
+              <div class="stat-label">Remaining Slots</div>
+              <div class="stat-number" id="remainingCount">5</div>
+              <div class="stat-note">slots available</div>
+            </div>
+          </article>
+
+          <article class="stat">
+            <div class="stat-icon">◷</div>
+            <div>
+              <div class="stat-label">Date Selected</div>
+              <div
+                class="stat-number"
+                id="selectedDateLabel"
+                style="font-size: 20px"
+              >
+                —
+              </div>
+              <div class="stat-note" id="weekdayLabel">Choose a date</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="controls">
+            <div class="field">
+              <label for="selectedDate">Select Date</label>
+              <input id="selectedDate" type="date" />
+            </div>
+            <button class="btn btn-primary" id="viewQueue">
+              ⌕ &nbsp; View Queue
+            </button>
+            <button class="btn btn-outline add-button" id="openAdd">
+              ＋ &nbsp; Add New Appointment
+            </button>
+          </div>
+          <div id="pageMessage" class="message" role="status"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2 class="section-title"><span>◷</span> Days Off</h2>
+            <span class="muted">Bookings will move to the next available date</span>
+          </div>
+          <form id="dayOffForm" class="controls">
+            <div class="field">
+              <label for="dayOffDate">Holiday Date</label>
+              <input id="dayOffDate" type="date" required />
+            </div>
+            <div class="field" style="flex: 1; min-width: 180px">
+              <label for="dayOffDescription">Description</label>
+              <input id="dayOffDescription" type="text" maxlength="100" placeholder="e.g. Public holiday" required />
+            </div>
+            <button class="btn btn-primary" type="submit" id="addDayOffButton">Add Day Off</button>
+          </form>
+          <div id="dayOffMessage" class="message" role="status"></div>
+          <div id="daysOffList" class="muted" style="margin-top: 14px">No days off configured.</div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2 class="section-title"><span>▦</span> Appointment List</h2>
+            <span class="muted" id="showingLabel">Showing 0 appointments</span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Token</th>
+                  <th>Customer Name</th>
+                  <th>Appointment Date</th>
+                  <th>Created At</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentRows"></tbody>
+            </table>
+          </div>
+
+          <div id="emptyState" class="empty">
+            <div class="empty-icon">▦ ♡</div>
+            <strong>No appointments found</strong>
+            <p>There are no appointments scheduled for this date.</p>
+            <span
+              >Try selecting a different date or add a new appointment.</span
+            >
+          </div>
+        </section>
+
+        <footer class="footer" id="about">
+          <div>
+            Qwiik Appointment Queue <span class="signature">by Fitri ♡</span>
+          </div>
+          <div>
+            Built with .NET &nbsp;|&nbsp; SQLite &nbsp;|&nbsp; Swagger UI &nbsp;
+            ♥
+          </div>
+        </footer>
+      </main>
+    </div>
+
+    <div
+      class="modal-backdrop"
+      id="modalBackdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+    >
+      <div class="modal">
+        <div class="modal-head">
+          <h2 id="modalTitle">New Appointment</h2>
+          <button class="close" id="closeModal" aria-label="Close">×</button>
+        </div>
+
+        <form id="appointmentForm">
+          <div class="form-fields">
+            <div class="field">
+              <label for="customerName">Customer Name</label>
+              <input
+                id="customerName"
+                name="customerName"
+                type="text"
+                maxlength="100"
+                placeholder="Enter customer name"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="appointmentDate">Appointment Date</label>
+              <input
+                id="appointmentDate"
+                name="appointmentDate"
+                type="date"
+                required
+              />
+            </div>
+          </div>
+
+          <div id="formMessage" class="message" role="status"></div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="cancelModal">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="submitAppointment"
+            >
+              Create Appointment
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = "/api/appointments";
+      const DAYS_OFF_URL = "/api/daysoff";
+      const DAILY_LIMIT = 5;
+
+      const selectedDateInput = document.getElementById("selectedDate");
+      const appointmentDateInput = document.getElementById("appointmentDate");
+      const appointmentRows = document.getElementById("appointmentRows");
+      const emptyState = document.getElementById("emptyState");
+      const pageMessage = document.getElementById("pageMessage");
+      const formMessage = document.getElementById("formMessage");
+      const dayOffMessage = document.getElementById("dayOffMessage");
+      const modalBackdrop = document.getElementById("modalBackdrop");
+
+      function localDateString(date = new Date()) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function showMessage(element, text, type) {
+        element.textContent = text;
+        element.className = `message ${type}`;
+      }
+
+      function clearMessage(element) {
+        element.textContent = "";
+        element.className = "message";
+      }
+
+      function formatDate(dateString) {
+        if (!dateString) return "—";
+        const date = new Date(`${dateString.slice(0, 10)}T12:00:00`);
+        return date.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      function formatDateTime(dateString) {
+        if (!dateString) return "—";
+        const date = new Date(dateString);
+        if (Number.isNaN(date.getTime())) return "—";
+        return date.toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function updateDateCards(dateString, count) {
+        document.getElementById("totalCount").textContent = count;
+        document.getElementById("remainingCount").textContent = Math.max(
+          0,
+          DAILY_LIMIT - count,
+        );
+
+        const date = new Date(`${dateString}T12:00:00`);
+
+        document.getElementById("selectedDateLabel").textContent =
+          date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+
+        document.getElementById("weekdayLabel").textContent =
+          date.toLocaleDateString("en-US", { weekday: "long" });
+
+        document.getElementById("showingLabel").textContent =
+          `Showing ${count} of ${count} appointment(s)`;
+      }
+
+      async function loadAppointments() {
+        clearMessage(pageMessage);
+
+        const date = selectedDateInput.value;
+
+        if (!date) {
+          showMessage(pageMessage, "Please select a date first.", "error");
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `${API_URL}?date=${encodeURIComponent(date)}`,
+          );
+
+          if (!response.ok) {
+            throw new Error(`API returned ${response.status}`);
+          }
+
+          const appointments = await response.json();
+
+          appointmentRows.replaceChildren();
+
+          appointments.forEach((appointment, index) => {
+            const row = document.createElement("tr");
+            const values = [
+              String(index + 1),
+              appointment.tokenNumber || "—",
+              appointment.customerName || "—",
+              formatDate(appointment.appointmentDate),
+              formatDateTime(appointment.createdAt),
+            ];
+
+            values.forEach((value, cellIndex) => {
+              const cell = document.createElement("td");
+
+              if (cellIndex === 1) {
+                const token = document.createElement("span");
+                token.className = "token";
+                token.textContent = value;
+                cell.appendChild(token);
+              } else {
+                cell.textContent = value;
+              }
+
+              row.appendChild(cell);
+            });
+
+            appointmentRows.appendChild(row);
+          });
+
+          emptyState.style.display = appointments.length ? "none" : "block";
+          updateDateCards(date, appointments.length);
+        } catch (error) {
+          showMessage(
+            pageMessage,
+            "Could not connect to the Qwiik API. Please make sure the application is running in VS Code, then try again.",
+            "error",
+          );
+          console.error(error);
+        }
+      }
+
+      async function loadDaysOff() {
+        const list = document.getElementById("daysOffList");
+        try {
+          const response = await fetch(DAYS_OFF_URL);
+          if (!response.ok) throw new Error("Could not load days off.");
+          const daysOff = await response.json();
+          list.replaceChildren();
+          if (!daysOff.length) {
+            list.textContent = "No days off configured.";
+            return;
+          }
+          daysOff.forEach((dayOff) => {
+            const row = document.createElement("div");
+            row.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #eee9ff";
+            const details = document.createElement("span");
+            details.textContent = `${formatDate(dayOff.date)} — ${dayOff.description}`;
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "btn btn-outline";
+            remove.textContent = "Remove";
+            remove.addEventListener("click", async () => {
+              const deleteResponse = await fetch(`${DAYS_OFF_URL}/${dayOff.id}`, { method: "DELETE" });
+              if (!deleteResponse.ok) {
+                showMessage(dayOffMessage, "Could not remove this day off.", "error");
+                return;
+              }
+              showMessage(dayOffMessage, "Day off removed.", "success");
+              await loadDaysOff();
+              await loadAppointments();
+            });
+            row.append(details, remove);
+            list.appendChild(row);
+          });
+        } catch (error) {
+          list.textContent = "Could not load days off. Check that the API is running.";
+        }
+      }
+
+      document.getElementById("dayOffForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearMessage(dayOffMessage);
+        const date = document.getElementById("dayOffDate").value;
+        const description = document.getElementById("dayOffDescription").value.trim();
+        const button = document.getElementById("addDayOffButton");
+        button.disabled = true;
+        try {
+          const response = await fetch(DAYS_OFF_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date, description })
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.message || "Could not add this day off.");
+          document.getElementById("dayOffForm").reset();
+          showMessage(dayOffMessage, "Day off saved. New bookings will skip this date.", "success");
+          await loadDaysOff();
+          await loadAppointments();
+        } catch (error) {
+          showMessage(dayOffMessage, error.message, "error");
+        } finally {
+          button.disabled = false;
+        }
+      });
+
+      function openModal() {
+        clearMessage(formMessage);
+
+        // Always use the date selected on the main page.
+        appointmentDateInput.value =
+          selectedDateInput.value || localDateString();
+
+        modalBackdrop.classList.add("show");
+        document.getElementById("customerName").focus();
+      }
+
+      function closeModal() {
+        modalBackdrop.classList.remove("show");
+        document.getElementById("appointmentForm").reset();
+        clearMessage(formMessage);
+      }
+
+      document
+        .getElementById("viewQueue")
+        .addEventListener("click", loadAppointments);
+
+      document.getElementById("openAdd").addEventListener("click", openModal);
+
+      document
+        .getElementById("openAddNav")
+        .addEventListener("click", (event) => {
+          event.preventDefault();
+          openModal();
+        });
+
+      document
+        .getElementById("closeModal")
+        .addEventListener("click", closeModal);
+
+      document
+        .getElementById("cancelModal")
+        .addEventListener("click", closeModal);
+
+      modalBackdrop.addEventListener("click", (event) => {
+        if (event.target === modalBackdrop) closeModal();
+      });
+
+      selectedDateInput.addEventListener("change", loadAppointments);
+
+      document
+        .getElementById("appointmentForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          clearMessage(formMessage);
+
+          const customerName = document
+            .getElementById("customerName")
+            .value.trim();
+
+          const appointmentDate = appointmentDateInput.value;
+
+          if (!customerName || !appointmentDate) {
+            showMessage(
+              formMessage,
+              "Please enter a customer name and appointment date.",
+              "error",
+            );
+            return;
+          }
+
+          const button = document.getElementById("submitAppointment");
+          button.disabled = true;
+          button.textContent = "Creating...";
+
+          try {
+            const response = await fetch(API_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ customerName, appointmentDate }),
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+              throw new Error(
+                result.message ||
+                  `Could not create appointment (${response.status}).`,
+              );
+            }
+
+            // The API may move the booking when the requested date is full or a day off.
+            const actualDate = result.appointmentDate
+              ? result.appointmentDate.slice(0, 10)
+              : appointmentDate;
+            selectedDateInput.value = actualDate;
+            closeModal();
+            await loadAppointments();
+
+            const moved = actualDate !== appointmentDate;
+            showMessage(
+              pageMessage,
+              moved
+                ? `The requested date was unavailable. Appointment scheduled for ${formatDate(actualDate)} with token ${result.tokenNumber || "assigned"}.`
+                : `Appointment created successfully. Token number: ${result.tokenNumber || "assigned"}.`,
+              "success",
+            );
+          } catch (error) {
+            showMessage(
+              formMessage,
+              error.message || "Unable to create appointment.",
+              "error",
+            );
+          } finally {
+            button.disabled = false;
+            button.textContent = "Create Appointment";
+          }
+        });
+
+      document.getElementById("todayLabel").textContent =
+        new Date().toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+
+      // Start with today's local date.
+      selectedDateInput.value = localDateString();
+      appointmentDateInput.value = localDateString();
+
+      loadAppointments();
+      loadDaysOff();
+    </script>
+  </body>
+</html>

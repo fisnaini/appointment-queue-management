@@ -1,0 +1,16 @@
+# Build output
+bin/
+obj/
+
+# Local database
+*.db
+*.db-shm
+*.db-wal
+
+# Local configuration and secrets
+appsettings.Development.json
+secrets.json
+
+# IDE files
+.vs/
+.vscode/
