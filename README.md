@@ -1,116 +1,69 @@
-# Qwiik Appointment Queue
+# Appointment Queue Management
 
-Qwiik is a simple appointment booking app built with ASP.NET Core and SQLite. It allows an agency to manage customer appointments, assign queue tokens, and keep track of daily bookings through a web interface.
+This project is a simple appointment booking application built with ASP.NET Core and SQLite.
+
+Users can book appointments, get a queue number, and check the appointment list for a specific date. The application also handles dates that are already full or marked as days off by finding the next available date.
 
 ## Features
 
-- Book appointments and assign queue tokens (`A001` to `A005`).
+- Book an appointment and get a queue number.
 - View appointments by date.
-- Set a daily limit of five appointments.
-- Automatically schedule bookings for the next available date if the requested date is full or marked as a day off.
-- Add and remove days off, such as public holidays.
-- View and test API endpoints through Swagger.
+- Limit bookings to five appointments per day.
+- Automatically find the next available date when a date is full or marked as a day off.
+- Add and remove days off.
+- Test the main booking and validation scenarios.
 
-## Requirements
+## Technologies Used
 
-- .NET 10 SDK
+- C# and ASP.NET Core
+- Entity Framework Core
+- SQLite
+- HTML, CSS, and JavaScript
+- Swagger for API testing
+- xUnit for unit testing
 
-## Running the App
+## How to Run
 
-1. Open the folder containing `Qwiik.csproj` in VS Code.
-2. Open the integrated terminal.
-3. Restore the required packages:
+Make sure the .NET 10 SDK is installed.
 
-   ```bash
-   dotnet restore
-   ```
+Open a terminal in the project folder and run:
 
-4. Start the application:
-
-   ```bash
-   dotnet run
-   ```
-
-5. Open the local URL shown in the terminal to access the Qwiik interface.
-
-To access the API documentation, open `/swagger` on the same local address.
-
-## API Endpoints
-
-### Appointments
-
-| Method | Endpoint                            | Description                           |
-| ------ | ----------------------------------- | ------------------------------------- |
-| POST   | `/api/appointments`                 | Create an appointment                 |
-| GET    | `/api/appointments?date=YYYY-MM-DD` | View appointments for a specific date |
-
-Example request body:
-
-```json
-{
-  "customerName": "Budi",
-  "appointmentDate": "2026-10-16"
-}
+```bash
+dotnet restore
+dotnet run
 ```
 
-When an appointment is created, the response includes its queue token and scheduled date. If the requested date is full or marked as a day off, the app looks for the next available date.
+Once the application starts, open the local URL shown in the terminal.
 
-### Days Off
+To test the API, add `/swagger` to the local URL.
 
-| Method | Endpoint            | Description       |
-| ------ | ------------------- | ----------------- |
-| GET    | `/api/daysoff`      | View all days off |
-| POST   | `/api/daysoff`      | Add a day off     |
-| DELETE | `/api/daysoff/{id}` | Remove a day off  |
+## Run the Tests
 
-Example request body:
-
-```json
-{
-  "date": "2026-12-25",
-  "description": "Public holiday"
-}
-```
-
-A day off cannot be added for a past date, and duplicate dates are not allowed. Days off can also be managed directly through the web interface.
-
-## Booking Rules
-
-- Customer names are required.
-- Appointments cannot be booked for dates in the past.
-- Each date can have up to five appointments.
-- Queue tokens start at `A001` for each date.
-- If a date is full or marked as a day off, the appointment is moved to the next available date.
-- The actual appointment date and assigned token are returned in the API response.
-
-## Running the Tests
-
-Run the following command from the project directory:
+From the project folder, run:
 
 ```bash
 dotnet test Qwiik.Tests/Qwiik.Tests.csproj
 ```
 
-The unit tests cover successful bookings, empty customer names, bookings when the daily limit is reached, and day-off handling.
+## API Endpoints
+
+| Method | Endpoint                            | Purpose                      |
+| ------ | ----------------------------------- | ---------------------------- |
+| POST   | `/api/appointments`                 | Create a new appointment     |
+| GET    | `/api/appointments?date=YYYY-MM-DD` | View appointments for a date |
+| POST   | `/api/daysoff`                      | Add a day off                |
+| DELETE | `/api/daysoff/{date}`               | Remove a day off             |
 
 ## Project Structure
 
-```text
-Qwiik/
-├── Controllers/   # API endpoints
-├── Data/          # Database context
-├── DTOs/          # Request objects
-├── Models/        # Data models
-├── Services/      # Booking logic
-├── wwwroot/       # Web interface
-└── Qwiik.Tests/   # Unit tests
-```
+- `Controllers` – Handles API requests.
+- `Data` – Contains the database context.
+- `DTOs` – Defines request data.
+- `Models` – Contains the application data models.
+- `Services` – Handles the booking rules and other application logic.
+- `wwwroot` – Contains the web interface.
+- `Qwiik.Tests` – Contains unit tests.
 
-## Technologies Used
+## Notes
 
-- ASP.NET Core Web API
-- Entity Framework Core
-- SQLite
-- Swagger / OpenAPI
-- HTML, CSS, and JavaScript
-- xUnit
+The application uses a local SQLite database. Each date can have up to five appointments, and bookings are moved to the next available date when necessary.
